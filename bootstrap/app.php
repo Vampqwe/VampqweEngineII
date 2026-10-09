@@ -11,6 +11,7 @@ use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 use Twig\TwigFunction;
 use Vampqwe\Engine\Config\Config;
+use Vampqwe\Engine\Database\Database;
 use Vampqwe\Engine\Database\ConnectionFactory;
 use Vampqwe\Engine\Http\MiddlewareStack;
 use Vampqwe\Engine\Http\Router;
@@ -50,6 +51,7 @@ $builder->addDefinitions([
     }),
     MiddlewareStack::class => factory(static fn (CsrfMiddleware $csrf): MiddlewareStack => new MiddlewareStack([$csrf])),
     PDO::class => factory(static fn (ConnectionFactory $factory): PDO => $factory->create()),
+    Database::class => factory(static fn (PDO $pdo): Database => new Database($pdo)),
     Router::class => factory(static fn (ContainerInterface $container): Router => new Router(
         $container,
         require $root . '/config/routes.php',

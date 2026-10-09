@@ -1,0 +1,8 @@
+{
+    "chat.tools.terminal.autoApprove": {
+        "/^php -r 'echo implode\\(\", \", PDO::getAvailableDrivers\\(\\)\\) \\. \"\\\\n\";'$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    }
+}

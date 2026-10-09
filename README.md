@@ -9,6 +9,7 @@
 ```sh
 composer install
 cp config.env.example config.env
+composer test
 php -S 127.0.0.1:8000 -t public
 ```
 
@@ -26,6 +27,8 @@ php -S 127.0.0.1:8000 -t public
 - `bootstrap/app.php` — конфигурация, сессия и DI-контейнер.
 
 Добавляйте маршруты в `config/routes.php`, контроллеры в `src/Controller/`, а зависимости объявляйте в контейнере в `bootstrap/app.php`. Контроллеры получают зависимости через конструктор.
+
+Для запросов внедряйте `Vampqwe\Engine\Database\Database` в repository-классы. Методы `fetchAll`, `fetchOne` и `execute` принимают параметры отдельно от SQL; не вставляйте пользовательский ввод в SQL-строку. `transaction()` поддерживает вложенные операции через savepoints.
 
 ## Безопасность
 
