@@ -19,6 +19,7 @@ php -S 127.0.0.1:8000 -t public
 
 - `public/` — единственная публичная директория и front controller.
 - `src/Controller/` — MVC-контроллеры.
+- `src/Model/` и `src/Repository/` — модель пользователя и доступ к данным.
 - `src/Http/` — маршрутизация и обработка HTTP-запросов.
 - `src/Http/MiddlewareStack.php` — расширяемая цепочка HTTP middleware.
 - `src/View/` и `templates/` — рендеринг Twig-шаблонов.
@@ -32,6 +33,8 @@ php -S 127.0.0.1:8000 -t public
 Для запросов внедряйте `Vampqwe\Engine\Database\Database` в repository-классы. Методы `fetchAll`, `fetchOne` и `execute` принимают параметры отдельно от SQL; не вставляйте пользовательский ввод в SQL-строку. `transaction()` поддерживает вложенные операции через savepoints.
 
 `Vampqwe\Engine\Repository\UserRepository` показывает CRUD для модели `User`. Репозиторий хранит только хеш пароля; передавайте в `create()` результат `password_hash()`, никогда не открытый пароль.
+
+Готовы маршруты `/register`, `/login`, `/logout` и `/account`. Регистрация требует пароль от 12 до 72 байт; ограничения настраиваются через `AUTH_PASSWORD_MIN_BYTES` и `AUTH_PASSWORD_MAX_BYTES`. Успешный вход регенерирует ID сессии и CSRF-токен. Ограничение частоты попыток входа и подтверждение email пока не включены.
 
 После создания базы данных и заполнения `config.env` примените миграции командой `php bin/console db:migrate`. Последний batch можно откатить командой `php bin/console db:migrate --rollback`; откат может удалить данные, поэтому проверяйте метод `down()` конкретной миграции перед его запуском.
 

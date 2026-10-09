@@ -14,9 +14,9 @@ final class View
     }
 
     /** @param array<string, mixed> $data */
-    public function render(string $template, array $data = []): Response
+    public function render(string $template, array $data = [], int $statusCode = Response::HTTP_OK): Response
     {
-        return new Response($this->twig->render($template, $data), Response::HTTP_OK, [
+        return new Response($this->twig->render($template, $data), $statusCode, [
             'Content-Type' => 'text/html; charset=UTF-8',
         ]);
     }

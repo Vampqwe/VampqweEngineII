@@ -31,4 +31,20 @@ final class Config
 
         return $value;
     }
+
+    public function getInt(string $key, int $default = 0, int $minimum = 0, int $maximum = PHP_INT_MAX): int
+    {
+        $value = filter_var($this->getString($key, (string) $default), FILTER_VALIDATE_INT);
+
+        if ($value === false || $value < $minimum || $value > $maximum) {
+            throw new InvalidArgumentException(sprintf(
+                'Configuration value "%s" must be an integer between %d and %d.',
+                $key,
+                $minimum,
+                $maximum,
+            ));
+        }
+
+        return $value;
+    }
 }
