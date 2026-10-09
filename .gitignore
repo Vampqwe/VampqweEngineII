@@ -1,0 +1,5 @@
+/config.env
+/vendor/
+/var/cache/
+/var/log/
+/.phpunit.cache/
