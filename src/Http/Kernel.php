@@ -14,6 +14,7 @@ final class Kernel
 {
     public function __construct(
         private readonly Router $router,
+        private readonly MiddlewareStack $middleware,
         private readonly LoggerInterface $logger,
         private readonly Config $config,
     ) {
@@ -22,7 +23,10 @@ final class Kernel
     public function handle(Request $request): Response
     {
         try {
-            $response = $this->router->dispatch($request);
+            $response = $this->middleware->handle(
+                $request,
+                fn (Request $request): Response => $this->router->dispatch($request),
+            );
         } catch (Throwable $exception) {
             $this->logger->error('Unhandled application exception.', ['exception' => $exception]);
             $message = $this->config->getBool('APP_DEBUG', false)

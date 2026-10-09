@@ -9,9 +9,13 @@ use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
+use Twig\TwigFunction;
 use Vampqwe\Engine\Config\Config;
 use Vampqwe\Engine\Database\ConnectionFactory;
+use Vampqwe\Engine\Http\MiddlewareStack;
 use Vampqwe\Engine\Http\Router;
+use Vampqwe\Engine\Security\CsrfMiddleware;
+use Vampqwe\Engine\Security\CsrfTokenManager;
 use function DI\factory;
 
 $root = dirname(__DIR__);
@@ -28,7 +32,7 @@ $builder->addDefinitions([
 
         return $logger;
     }),
-    Environment::class => factory(static function (Config $config) use ($root): Environment {
+    Environment::class => factory(static function (Config $config, CsrfTokenManager $csrf) use ($root): Environment {
         $options = [
             'autoescape' => 'html',
             'strict_variables' => true,
@@ -39,8 +43,12 @@ $builder->addDefinitions([
             $options['cache'] = $root . '/var/cache/twig';
         }
 
-        return new Environment(new FilesystemLoader($root . '/templates'), $options);
+        $twig = new Environment(new FilesystemLoader($root . '/templates'), $options);
+        $twig->addFunction(new TwigFunction('csrf_token', static fn (): string => $csrf->token()));
+
+        return $twig;
     }),
+    MiddlewareStack::class => factory(static fn (CsrfMiddleware $csrf): MiddlewareStack => new MiddlewareStack([$csrf])),
     PDO::class => factory(static fn (ConnectionFactory $factory): PDO => $factory->create()),
     Router::class => factory(static fn (ContainerInterface $container): Router => new Router(
         $container,
