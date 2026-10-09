@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Vampqwe\Engine\Config\Config;
 use Vampqwe\Engine\Security\AuthService;
+use Vampqwe\Engine\Security\LoginRateLimiter;
 use Vampqwe\Engine\Security\UserAlreadyRegistered;
 use Vampqwe\Engine\View\View;
 
@@ -18,6 +19,7 @@ final class AuthController
     public function __construct(
         private readonly AuthService $auth,
         private readonly Config $config,
+        private readonly LoginRateLimiter $rateLimiter,
         private readonly View $view,
     ) {
     }
@@ -35,6 +37,12 @@ final class AuthController
     /** @param array<string, string> $parameters */
     public function register(Request $request, array $parameters = []): Response
     {
+        $retryAfter = $this->rateLimiter->consumeRegistration($request->getClientIp());
+
+        if ($retryAfter !== null) {
+            return $this->rateLimitedResponse($retryAfter);
+        }
+
         $data = $request->request->all();
         $email = $data['email'] ?? null;
         $password = $data['password'] ?? null;
@@ -69,10 +77,18 @@ final class AuthController
         $data = $request->request->all();
         $email = $data['email'] ?? null;
         $password = $data['password'] ?? null;
+        $emailForLimit = is_string($email) ? $email : '';
+        $retryAfter = $this->rateLimiter->consumeLogin($emailForLimit, $request->getClientIp());
+
+        if ($retryAfter !== null) {
+            return $this->rateLimitedResponse($retryAfter);
+        }
 
         if (!is_string($email) || !is_string($password) || !$this->auth->authenticate($email, $password)) {
             return $this->renderForm('auth/login.twig', 'Неверный email или пароль.', Response::HTTP_UNPROCESSABLE_ENTITY, is_string($email) ? $email : '');
         }
+
+        $this->rateLimiter->resetAccount($email);
 
         return new RedirectResponse('/account');
     }
@@ -111,5 +127,12 @@ final class AuthController
             'error' => $error,
             'email' => $email,
         ], $statusCode);
+    }
+
+    private function rateLimitedResponse(int $retryAfter): Response
+    {
+        return new Response('Слишком много попыток. Повторите позже.', Response::HTTP_TOO_MANY_REQUESTS, [
+            'Retry-After' => (string) $retryAfter,
+        ]);
     }
 }

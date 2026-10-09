@@ -5,8 +5,10 @@ declare(strict_types=1);
 use DI\ContainerBuilder;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
+use Psr\Cache\CacheItemPoolInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 use Twig\TwigFunction;
@@ -19,6 +21,7 @@ use Vampqwe\Engine\Http\MiddlewareStack;
 use Vampqwe\Engine\Http\Router;
 use Vampqwe\Engine\Security\CsrfMiddleware;
 use Vampqwe\Engine\Security\CsrfTokenManager;
+use Vampqwe\Engine\Security\LoginRateLimiter;
 use function DI\factory;
 
 $root = dirname(__DIR__);
@@ -29,6 +32,12 @@ date_default_timezone_set($config->getString('APP_TIMEZONE', 'UTC'));
 $builder = new ContainerBuilder();
 $builder->addDefinitions([
     Config::class => $config,
+    CacheItemPoolInterface::class => factory(static function (Config $config) use ($root): CacheItemPoolInterface {
+        $path = $config->getString('RATE_LIMIT_CACHE_PATH', 'var/cache/rate-limiter');
+        $path = str_starts_with($path, DIRECTORY_SEPARATOR) ? $path : $root . '/' . $path;
+
+        return new FilesystemAdapter('vampqwe_rate_limits', 0, $path);
+    }),
     LoggerInterface::class => factory(static function (Config $config) use ($root): LoggerInterface {
         $logger = new Logger($config->getString('APP_NAME', 'app'));
         $logger->pushHandler(new StreamHandler($root . '/var/log/app.log'));
