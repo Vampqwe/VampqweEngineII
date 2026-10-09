@@ -13,6 +13,8 @@ use Twig\TwigFunction;
 use Vampqwe\Engine\Config\Config;
 use Vampqwe\Engine\Database\Database;
 use Vampqwe\Engine\Database\ConnectionFactory;
+use Vampqwe\Engine\Database\MigrateCommand;
+use Vampqwe\Engine\Database\MigrationRunner;
 use Vampqwe\Engine\Http\MiddlewareStack;
 use Vampqwe\Engine\Http\Router;
 use Vampqwe\Engine\Security\CsrfMiddleware;
@@ -52,6 +54,12 @@ $builder->addDefinitions([
     MiddlewareStack::class => factory(static fn (CsrfMiddleware $csrf): MiddlewareStack => new MiddlewareStack([$csrf])),
     PDO::class => factory(static fn (ConnectionFactory $factory): PDO => $factory->create()),
     Database::class => factory(static fn (PDO $pdo): Database => new Database($pdo)),
+    MigrateCommand::class => factory(static function (MigrationRunner $runner, Config $config) use ($root): MigrateCommand {
+        $path = $config->getString('MIGRATIONS_PATH', 'database/migrations');
+        $path = str_starts_with($path, DIRECTORY_SEPARATOR) ? $path : $root . '/' . $path;
+
+        return new MigrateCommand($runner, $path);
+    }),
     Router::class => factory(static fn (ContainerInterface $container): Router => new Router(
         $container,
         require $root . '/config/routes.php',

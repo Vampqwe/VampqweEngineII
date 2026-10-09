@@ -23,12 +23,15 @@ php -S 127.0.0.1:8000 -t public
 - `src/Http/MiddlewareStack.php` — расширяемая цепочка HTTP middleware.
 - `src/View/` и `templates/` — рендеринг Twig-шаблонов.
 - `src/Database/` — создание PDO-подключения к MySQL.
+- `database/migrations/` — версионируемые изменения схемы БД.
 - `config/routes.php` — декларативная таблица маршрутов.
 - `bootstrap/app.php` — конфигурация, сессия и DI-контейнер.
 
 Добавляйте маршруты в `config/routes.php`, контроллеры в `src/Controller/`, а зависимости объявляйте в контейнере в `bootstrap/app.php`. Контроллеры получают зависимости через конструктор.
 
 Для запросов внедряйте `Vampqwe\Engine\Database\Database` в repository-классы. Методы `fetchAll`, `fetchOne` и `execute` принимают параметры отдельно от SQL; не вставляйте пользовательский ввод в SQL-строку. `transaction()` поддерживает вложенные операции через savepoints.
+
+После создания базы данных и заполнения `config.env` примените миграции командой `php bin/console db:migrate`. Последний batch можно откатить командой `php bin/console db:migrate --rollback`; откат может удалить данные, поэтому проверяйте метод `down()` конкретной миграции перед его запуском.
 
 ## Безопасность
 
