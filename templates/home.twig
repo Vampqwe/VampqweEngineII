@@ -1,8 +1,102 @@
 {% extends 'layout.twig' %}
 
-{% block title %}{{ appName }}{% endblock %}
+{% block title %}{{ appName }} — установка и возможности{% endblock %}
 
 {% block content %}
-    <h1>{{ appName }}</h1>
-    <p>Приложение запущено.</p>
+    <div class="home-page">
+        <section class="home-hero" aria-labelledby="hero-title">
+            <div class="hero-copy">
+                <p class="eyebrow">PHP 8.2+ · MVC · MySQL</p>
+                <h1 class="hero-title" id="hero-title">
+                    {{ appName }}
+                    <span>Основа для вашего следующего сайта.</span>
+                </h1>
+                <p class="hero-description">Открытый каркас для серверных приложений: маршруты, шаблоны и данные собраны в понятную структуру, которую можно расширять под свой проект.</p>
+                <div class="hero-actions">
+                    <a class="action-link action-link-primary" href="#install">Начать установку</a>
+                    <a class="action-link action-link-secondary" href="#features">Изучить возможности</a>
+                </div>
+                <p class="hero-footnote">Composer · PHP-DI · FastRoute · Twig · PDO</p>
+            </div>
+            <div class="flow-preview" aria-label="Путь HTTP-запроса через движок">
+                <div class="flow-topline"><span>HTTP REQUEST FLOW</span><span class="flow-status">READY</span></div>
+                <div class="flow-request"><span>GET</span><code>/account</code></div>
+                <div class="flow-steps">
+                    <div class="flow-step"><span class="flow-index">01</span><span class="flow-label"><strong>Router</strong><small>FastRoute</small></span><span class="flow-result">match</span></div>
+                    <div class="flow-step"><span class="flow-index">02</span><span class="flow-label"><strong>Middleware</strong><small>CSRF · auth</small></span><span class="flow-result">check</span></div>
+                    <div class="flow-step"><span class="flow-index">03</span><span class="flow-label"><strong>Controller</strong><small>PHP-DI</small></span><span class="flow-result">handle</span></div>
+                    <div class="flow-step"><span class="flow-index">04</span><span class="flow-label"><strong>View</strong><small>Twig</small></span><span class="flow-result">render</span></div>
+                </div>
+                <div class="flow-response"><span>RESPONSE</span><code>200 · text/html</code></div>
+            </div>
+        </section>
+
+        <section class="feature-section" id="features" aria-labelledby="features-title">
+            <div class="section-intro">
+                <p class="eyebrow">Внутри каркаса</p>
+                <h2 id="features-title">Понятная основа.<br>Без лишнего слоя магии.</h2>
+            </div>
+            <div class="feature-grid">
+                <article class="feature-item"><span class="feature-number">01 / ARCHITECTURE</span><h3>MVC и DI</h3><p>Контроллеры, представления и зависимости разделены; классы загружаются через Composer PSR-4.</p></article>
+                <article class="feature-item"><span class="feature-number">02 / DATA</span><h3>PDO и миграции</h3><p>Подготовленные запросы, транзакции, миграции схемы и пример репозитория пользователя.</p></article>
+                <article class="feature-item"><span class="feature-number">03 / SECURITY</span><h3>Защита по умолчанию</h3><p>CSRF-проверка, хеширование паролей, безопасные сессии и лимиты попыток входа.</p></article>
+                <article class="feature-item"><span class="feature-number">04 / TEMPLATES</span><h3>Twig и адаптивная база</h3><p>Автоэкранирование HTML, CSRF-функция в шаблонах и локальные CSS/JS assets.</p></article>
+            </div>
+        </section>
+
+        <section class="install-section" id="install" aria-labelledby="install-title">
+            <div class="section-intro">
+                <p class="eyebrow">Быстрый старт</p>
+                <h2 id="install-title">От клонирования<br>до первого экрана.</h2>
+                <p class="section-description">Нужны PHP 8.2+, Composer, расширения <code>pdo</code> и <code>pdo_mysql</code>, а также созданная база MySQL.</p>
+            </div>
+            <div class="install-layout">
+                <ol class="setup-steps">
+                    <li><span>01</span><div><strong>Установите зависимости</strong><p>Composer проверит PHP и расширения.</p></div></li>
+                    <li><span>02</span><div><strong>Настройте окружение</strong><p>Укажите реквизиты MySQL в <code>config.env</code>.</p></div></li>
+                    <li><span>03</span><div><strong>Подготовьте схему</strong><p>Примените версионируемые миграции.</p></div></li>
+                    <li><span>04</span><div><strong>Запустите локально</strong><p>Откройте сайт на порту 8000.</p></div></li>
+                </ol>
+                <div class="code-window">
+                    <div class="code-window-header"><span>TERMINAL</span><span>LOCAL SETUP</span></div>
+                    <pre><code>composer install
+cp config.env.example config.env
+<span class="code-comment"># Заполните MYSQL_* и создайте базу</span>
+php bin/console db:migrate
+composer test
+composer serve</code></pre>
+                    <div class="code-window-footer">После настройки откройте <code>http://127.0.0.1:8000</code></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="usage-section" aria-labelledby="usage-title">
+            <div class="usage-copy">
+                <p class="eyebrow">Рабочий процесс</p>
+                <h2 id="usage-title">Добавьте маршрут.<br>Остальное — ваши классы.</h2>
+                <p class="section-description">Опишите URL и контроллер в конфигурации, внедрите нужные зависимости через конструктор и отрисуйте Twig-шаблон.</p>
+                <a class="inline-link" href="/README.md">Открыть руководство по проекту <span aria-hidden="true">↗</span></a>
+            </div>
+            <div class="code-window usage-code">
+                <div class="code-window-header"><span>config/routes.php</span><span>PHP</span></div>
+                <pre><code>return [
+    ['GET', '/reports', [
+        ReportController::class,
+        'index',
+    ]],
+];</code></pre>
+                <div class="code-window-header code-window-subheader"><span>src/Controller/ReportController.php</span></div>
+                <pre><code>public function index(Request $request): Response
+{
+    return $this->view->render('reports/index.twig');
+}</code></pre>
+            </div>
+        </section>
+
+        <section class="preview-note" aria-label="Статус проекта">
+            <span class="note-mark" aria-hidden="true">i</span>
+            <p>Это расширяемый стартовый каркас, а не готовая CMS. Настройте окружение, проверьте миграции и добавьте правила доступа под свой проект.</p>
+            <a href="/register">Попробовать регистрацию</a>
+        </section>
+    </div>
 {% endblock %}
