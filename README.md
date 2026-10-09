@@ -18,6 +18,7 @@ php -S 127.0.0.1:8000 -t public
 ## Структура
 
 - `public/` — единственная публичная директория и front controller.
+- `public/assets/` — локальные CSS и JavaScript файлы.
 - `src/Controller/` — MVC-контроллеры.
 - `src/Model/` и `src/Repository/` — модель пользователя и доступ к данным.
 - `src/Http/` — маршрутизация и обработка HTTP-запросов.

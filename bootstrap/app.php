@@ -47,6 +47,7 @@ $builder->addDefinitions([
     Environment::class => factory(static function (Config $config, CsrfTokenManager $csrf) use ($root): Environment {
         $options = [
             'autoescape' => 'html',
+            'auto_reload' => $config->getString('APP_ENV', 'production') !== 'production',
             'strict_variables' => true,
             'debug' => $config->getBool('APP_DEBUG', false),
         ];

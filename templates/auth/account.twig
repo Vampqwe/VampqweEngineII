@@ -3,10 +3,13 @@
 {% block title %}Аккаунт · {{ appName }}{% endblock %}
 
 {% block content %}
-    <h1>Аккаунт</h1>
-    <p>{{ user.email }}</p>
-    <form method="post" action="/logout">
-        <input type="hidden" name="_token" value="{{ csrf_token() }}">
-        <button type="submit">Выйти</button>
-    </form>
+    <section class="auth-panel account-panel" aria-labelledby="page-title">
+        <p class="eyebrow">Личный кабинет</p>
+        <h1 id="page-title">Ваш аккаунт</h1>
+        <p class="account-email">{{ user.email }}</p>
+        <form method="post" action="/logout">
+            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+            <button class="secondary-action" type="submit">Выйти</button>
+        </form>
+    </section>
 {% endblock %}

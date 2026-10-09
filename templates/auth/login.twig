@@ -3,15 +3,26 @@
 {% block title %}Вход · {{ appName }}{% endblock %}
 
 {% block content %}
-    <h1>Вход</h1>
-    {% if error %}<p role="alert">{{ error }}</p>{% endif %}
-    <form method="post" action="/login">
-        <input type="hidden" name="_token" value="{{ csrf_token() }}">
-        <label for="email">Email</label>
-        <input id="email" name="email" type="email" autocomplete="username" required value="{{ email }}">
-        <label for="password">Пароль</label>
-        <input id="password" name="password" type="password" autocomplete="current-password" required>
-        <button type="submit">Войти</button>
-    </form>
-    <p><a href="/register">Создать аккаунт</a></p>
+    <section class="auth-panel" aria-labelledby="page-title">
+        <p class="eyebrow">Рады видеть снова</p>
+        <h1 id="page-title">Войти в аккаунт</h1>
+        <p class="intro-copy">Введите данные своей учётной записи.</p>
+        {% if error %}<p class="form-error" id="form-error" role="alert">{{ error }}</p>{% endif %}
+        <form class="auth-form" method="post" action="/login">
+            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+            <div class="form-field">
+                <label for="email">Email</label>
+                <input id="email" name="email" type="email" autocomplete="username" required value="{{ email }}" {% if error %}aria-describedby="form-error"{% endif %}>
+            </div>
+            <div class="form-field">
+                <label for="password">Пароль</label>
+                <div class="password-control">
+                    <input id="password" name="password" type="password" autocomplete="current-password" required>
+                    <button class="password-toggle" type="button" data-password-toggle aria-controls="password" aria-pressed="false">Показать</button>
+                </div>
+            </div>
+            <button class="primary-action" type="submit">Войти</button>
+        </form>
+        <p class="form-footnote">Нет аккаунта? <a href="/register">Зарегистрироваться</a></p>
+    </section>
 {% endblock %}

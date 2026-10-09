@@ -4,10 +4,28 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}{{ appName }}{% endblock %}</title>
+    <link rel="stylesheet" href="/assets/css/app.css">
+    <script src="/assets/js/app.js" defer></script>
 </head>
 <body>
-    <main>
-        {% block content %}{% endblock %}
-    </main>
+    <div class="site-shell">
+        <header class="site-header">
+            <a class="brand" href="/">
+                <span class="brand-mark" aria-hidden="true">V</span>
+                <span>{{ appName }}</span>
+            </a>
+            <nav class="site-nav" aria-label="Основная навигация">
+                <a href="/login">Войти</a>
+                <a class="nav-action" href="/register">Создать аккаунт</a>
+            </nav>
+        </header>
+        <main class="page-main">
+            {% block content %}{% endblock %}
+        </main>
+        <footer class="site-footer">
+            <span>{{ appName }}</span>
+            <span>Безопасность начинается с хороших основ.</span>
+        </footer>
+    </div>
 </body>
 </html>
